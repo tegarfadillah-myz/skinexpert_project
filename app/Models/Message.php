@@ -10,7 +10,7 @@ class Message extends Model
         'consultation_id',
         'sender_id',
         'sender_type',
-        'content',
+        'body',
     ];
 
     public function consultation()

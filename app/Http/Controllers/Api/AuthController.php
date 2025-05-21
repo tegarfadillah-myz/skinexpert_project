@@ -12,27 +12,39 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string',
-            'namabelakang' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
-            'nohp' => 'required|string'
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string',
+                'namabelakang' => 'required|string',
+                'email' => 'required|email|unique:users',
+                'password' => 'required|min:6',
+                'nohp' => 'required|string'
+            ]);
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'namabelakang' => $validated['namabelakang'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-            'nohp' => $validated['nohp'],
-        ]);
+            $user = User::create([
+                'name' => $validated['name'],
+                'namabelakang' => $validated['namabelakang'],
+                'email' => $validated['email'],
+                'password' => bcrypt($validated['password']),
+                'nohp' => $validated['nohp'],
+            ]);
 
-        return response()->json([
-            'user' => $user,
-            'token' => $user->createToken('api-token')->plainTextToken,
-        ]);
+            $token = $user->createToken('api-token')->plainTextToken;
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Registrasi berhasil',
+                'user' => $user,
+                'token' => $token
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
+
 
     public function login(Request $request)
     {
@@ -44,20 +56,29 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Email atau password salah'],
-            ]);
+            return response()->json([
+                'status' => false,
+                'message' => 'Email atau password salah',
+            ], 401);
         }
 
+        $token = $user->createToken('api-token')->plainTextToken;
+
         return response()->json([
+            'status' => true,
+            'message' => 'Login berhasil',
             'user' => $user,
-            'token' => $user->createToken('api-token')->plainTextToken,
+            'token' => $token
         ]);
     }
 
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Logged out']);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Logout berhasil'
+        ]);
     }
 }
