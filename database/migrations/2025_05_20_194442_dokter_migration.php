@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 
-class CreateDoktersTable extends Migration
+return new class extends Migration
 {
     public function up(): void
     {
@@ -21,7 +21,7 @@ class CreateDoktersTable extends Migration
             $table->text('deskripsi')->nullable();
             $table->string('email_dokter')->unique()->nullable();
             $table->string('nohp_dokter')->nullable();
-            $table->boolean('status')->default(true); 
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
@@ -30,4 +30,4 @@ class CreateDoktersTable extends Migration
     {
         Schema::dropIfExists('dokter');
     }
-}
+};
