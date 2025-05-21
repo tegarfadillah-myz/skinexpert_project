@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('produk', function (Blueprint $table) {
-            $table->id('id_produk');
+            $table->id('id_produk');                       // PK
             $table->string('nama_produk');
+            $table->string('slug')->unique();              // ← kolom slug unik
             $table->text('deskripsi_produk')->nullable();
             $table->decimal('harga', 10, 2);
             $table->integer('stok')->default(0);
@@ -26,7 +27,6 @@ return new class extends Migration
                 'sunscreen',
                 'produk lainnya',
             ]);
-
             $table->timestamps();
         });
     }
