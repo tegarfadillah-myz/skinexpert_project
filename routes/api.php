@@ -25,13 +25,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/consultations/{id}/messages', [MessageController::class, 'index']);
     Route::post('/consultations/{id}/messages', [MessageController::class, 'store']);
 
+    Route::put('/articles/{id}', [ArticleController::class, 'update']);
+    Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);
+
     Route::post('/articles', [ArticleController::class, 'store']);
 });
 
 Route::prefix('dokter')->group(function () {
     Route::get('/', [DokterController::class, 'index']);
     Route::post('/', [DokterController::class, 'store']);
-    Route::get('{id}', [DokterController::class, 'show']);
+    Route::get('/{id}', [DokterController::class, 'show']);
+    Route::put('/{id}', [DokterController::class, 'update']);
+    Route::delete('/{id}', [DokterController::class, 'destroy']);
 });
 
 Route::prefix('produk')->group(function () {

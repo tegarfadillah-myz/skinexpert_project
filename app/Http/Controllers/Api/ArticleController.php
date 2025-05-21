@@ -77,4 +77,87 @@ class ArticleController extends Controller
             'data' => $article,
         ], 201);
     }
+
+    public function update(Request $request, $id)
+    {
+        if (!Auth::check()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Autentikasi diperlukan',
+            ], 401);
+        }
+
+        $article = ArticleNews::find($id);
+
+        if (!$article) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Artikel tidak ditemukan',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'content' => 'sometimes|required|string',
+            'category_id' => 'sometimes|required|exists:category_articles,id',
+            'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'is_featured' => 'nullable|in:featured,not_featured',
+        ]);
+
+        // Update thumbnail jika ada file baru
+        if ($request->hasFile('thumbnail')) {
+            // Hapus thumbnail lama jika bukan default
+            if ($article->thumbnail && $article->thumbnail !== 'thumbnails/gambar-0-alodokter.jpg') {
+                Storage::disk('public')->delete($article->thumbnail);
+            }
+            $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
+            $article->thumbnail = $thumbnailPath;
+        }
+
+        // Update field lain jika ada di request
+        foreach (['name', 'content', 'category_id', 'is_featured'] as $field) {
+            if ($request->has($field)) {
+                $article->$field = $validated[$field];
+            }
+        }
+
+        $article->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Artikel berhasil diperbarui',
+            'data' => $article,
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        if (!Auth::check()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Autentikasi diperlukan',
+            ], 401);
+        }
+
+        $article = ArticleNews::find($id);
+
+        if (!$article) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Artikel tidak ditemukan',
+            ], 404);
+        }
+
+        // Hapus thumbnail jika bukan default
+        if ($article->thumbnail && $article->thumbnail !== 'thumbnails/gambar-0-alodokter.jpg') {
+            Storage::disk('public')->delete($article->thumbnail);
+        }
+
+        $article->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Artikel berhasil dihapus',
+        ]);
+    }
 }

@@ -92,6 +92,8 @@ class DokterController extends Controller
 
         $dokter->update($validated);
 
+        $dokter->refresh();
+
         return response()->json([
             'status' => true,
             'message' => 'Data dokter berhasil diperbarui',

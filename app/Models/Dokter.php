@@ -6,20 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Dokter extends Model
 {
-    protected $table = 'dokter'; 
+    protected $table = 'dokter';
 
     protected $fillable = [
         'nama_dokter',
         'harga_konsultasi',
         'tahun_pengalaman',
         'kota',
-        'rating',
         'spesialisasi',
-        'foto',
-        'deskripsi',
         'email_dokter',
         'nohp_dokter',
         'status',
+        'rating',
+        'deskripsi',
+        'foto',
     ];
 
     public function consultations()
