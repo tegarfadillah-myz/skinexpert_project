@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ArticleResource;
 use App\Models\ArticleNews;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,7 @@ class ArticleController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => $articles,
+            'data' => ArticleResource::collection($articles),
         ]);
     }
 
@@ -38,7 +39,7 @@ class ArticleController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => $article,
+            'data' => new ArticleResource($article),
         ]);
     }
 
@@ -74,7 +75,7 @@ class ArticleController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Artikel berhasil dibuat',
-            'data' => $article,
+            'data' => new ArticleResource($article),
         ], 201);
     }
 
@@ -126,7 +127,7 @@ class ArticleController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Artikel berhasil diperbarui',
-            'data' => $article,
+            'data' => new ArticleResource($article),
         ]);
     }
 
